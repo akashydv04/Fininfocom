@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="shyam.gunsariya.fininfocom.fragment.ui.login.LoginFragment"
+        android:label="Login Fragment" />
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="shyam.gunsariya.fininfocom.fragment.listItem.ListFragment"
+        android:label="List Fragment" />
+</navigation>
