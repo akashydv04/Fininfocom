@@ -20,6 +20,7 @@ class LoginFragment : Fragment() {
 
     private val viewModel by viewModel<LoginViewModel>()
     private var _binding: FragmentLoginBinding? = null
+    val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     private val binding get() = _binding!!
 
@@ -71,18 +72,42 @@ class LoginFragment : Fragment() {
         }
 
         registerButton.setOnClickListener {
-            loadingProgressBar.visibility = View.VISIBLE
-            viewModel.registerUser(
-                usernameEditText.text.toString(),
-                passwordEditText.text.toString()
-            )
+            val regex = Regex("^(?=.{7,})(?=.*[a-z])(?=.*[A-Z])(?=.*[^\\w\\d]).*\$")
+            if (usernameEditText.text.toString().length < 10){
+                usernameEditText.error = "username must be 10 character long"
+            }
+            else if (passwordEditText.text.toString().length < 7){
+                passwordEditText.error = "password must be 7 character long"
+            }
+            else if (passwordEditText.text.toString().matches(regex).not()){
+                passwordEditText.error = "Password must be 7 Characters with 1UpperCase Alphabet and 1SpecialCharacter and Numeric"
+            }
+            else {
+                loadingProgressBar.visibility = View.VISIBLE
+                viewModel.registerUser(
+                    usernameEditText.text.toString(),
+                    passwordEditText.text.toString()
+                )
+            }
         }
         loginButton.setOnClickListener {
-            loadingProgressBar.visibility = View.VISIBLE
-            viewModel.signInUser(
-                usernameEditText.text.toString(),
-                passwordEditText.text.toString()
-            )
+            val regex = Regex("^(?=.{7,})(?=.*[a-z])(?=.*[A-Z])(?=.*[^\\w\\d]).*\$")
+            if (usernameEditText.text.toString().length < 10){
+                usernameEditText.error = "username must be 10 character long"
+            }
+            else if (passwordEditText.text.toString().length < 7){
+                passwordEditText.error = "password must be 7 character long"
+            }
+            else if (passwordEditText.text.toString().matches(regex).not()){
+                passwordEditText.error = "Password must be 7 Characters with 1UpperCase Alphabet and 1SpecialCharacter and Numeric"
+            }
+            else {
+                loadingProgressBar.visibility = View.VISIBLE
+                viewModel.signInUser(
+                    usernameEditText.text.toString(),
+                    passwordEditText.text.toString()
+                )
+            }
         }
 
         viewModel.loginResponse.observe(viewLifecycleOwner){
@@ -91,11 +116,16 @@ class LoginFragment : Fragment() {
             }else{
                 showLoginFailed(it.message)
             }
+            loadingProgressBar.visibility = View.GONE
         }
     }
 
     private fun updateLogin(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        val user = mAuth.currentUser
+        if (user!= null){
+            findNavController().navigate(R.id.listFragment)
+        }
     }
 
     private fun showLoginFailed(errorString: String) {
@@ -105,7 +135,7 @@ class LoginFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val user = FirebaseAuth.getInstance().currentUser
+        val user = mAuth.currentUser
         if (user!= null){
             findNavController().navigate(R.id.listFragment)
         }

@@ -12,27 +12,43 @@ class LoginViewModel(): ViewModel() {
     val loginResponse : MutableLiveData<LoginResponse> = MutableLiveData()
 
     fun registerUser(username: String, password: String) {
+        var uname = username
+        val regex = Regex("^(.+)@(.+)\$")
+        if (username.matches(regex).not()){
+            uname = "$username@test.com"
+        }
         viewModelScope.launch {
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(username, password)
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(uname, password)
                 .addOnCompleteListener {
                     if (it.isComplete){
-                        loginResponse.postValue(LoginResponse(true, "Test User Register"))
+                        if (FirebaseAuth.getInstance().currentUser != null)
+                            loginResponse.postValue(LoginResponse(true, "Test User Register"))
+                        else
+                            loginResponse.postValue(LoginResponse(false, "Something went wrong"))
                     }
                     else{
-                        loginResponse.postValue(LoginResponse(true, "Something went wrong"))
+                        loginResponse.postValue(LoginResponse(false, "Something went wrong"))
                     }
                 }
         }
     }
     fun signInUser(username: String, password: String) {
+        var uname = username
+        val regex = Regex("^(.+)@(.+)\$")
+        if (username.matches(regex).not()){
+            uname = "$username@test.com"
+        }
         viewModelScope.launch {
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password)
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(uname, password)
                 .addOnCompleteListener {
                     if (it.isComplete){
-                        loginResponse.postValue(LoginResponse(true, "Test User Logged In"))
+                        if (FirebaseAuth.getInstance().currentUser != null)
+                            loginResponse.postValue(LoginResponse(true, "Test User Logged In"))
+                        else
+                            loginResponse.postValue(LoginResponse(false, "Something went wrong"))
                     }
                     else{
-                        loginResponse.postValue(LoginResponse(true, "Something went wrong"))
+                        loginResponse.postValue(LoginResponse(false, "Something went wrong"))
                     }
                 }
         }
